@@ -11,6 +11,7 @@ vim.pack.add ({
     { src = "https://github.com/folke/which-key.nvim"},
     { src = "https://github.com/lewis6991/gitsigns.nvim"},
     { src = "https://github.com/windwp/nvim-autopairs"},
+    { src = "https://github.com/windwp/nvim-ts-autotag" },
 })
 
 -- set up the theme lol
@@ -29,6 +30,8 @@ local languages = {
     'python',
     'javascript',
     'typescript',
+    'tsx',
+    'jsx',
     'cpp',
     'lua',
     'json',
@@ -37,10 +40,10 @@ local languages = {
     'css',
     'markdown',
 }
-require('nvim-treesitter').install (languages)
+require('nvim-treesitter').install (languages):wait(300000)
 
 vim.api.nvim_create_autocmd('FileType', {
-    pattern = languages,
+    pattern = { 'python', 'javascript', 'javascriptreact', 'typescript', 'typescriptreact', 'cpp', 'lua', 'json', 'bash', 'html', 'css', 'markdown' },
     callback = function()
         vim.treesitter.start()
     end,
@@ -118,3 +121,21 @@ require('nvim-autopairs').setup {
     map_c_w = false, -- map <c-w> to delete a pair if possible
 }
 
+-- auto tag set up
+
+require('nvim-ts-autotag').setup({
+  opts = {
+    -- Defaults
+    enable_close = true, -- Auto close tags
+    enable_rename = true, -- Auto rename pairs of tags
+    enable_close_on_slash = false -- Auto close on trailing </
+  },
+  -- Also override individual filetype configs, these take priority.
+  -- Empty by default, useful if one of the "opts" global settings
+  -- doesn't work well in a specific filetype
+  -- per_filetype = {
+  --   ["html"] = {
+  --     enable_close = false
+  --   }
+  -- }
+})
