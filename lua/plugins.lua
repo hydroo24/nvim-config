@@ -7,7 +7,6 @@ vim.pack.add ({
     { src = "https://github.com/nvim-tree/nvim-web-devicons"},
     { src = "https://github.com/neovim/nvim-lspconfig" },
     { src = "https://github.com/mason-org/mason.nvim" },
-    { src = "https://github.com/stevearc/oil.nvim" },
     { src = "https://github.com/mikavilpas/yazi.nvim"},
     { src = "https://github.com/folke/which-key.nvim"},
     { src = "https://github.com/lewis6991/gitsigns.nvim"},
@@ -82,11 +81,10 @@ for _, lang in ipairs(servers) do
     vim.lsp.enable(lang)
 end
 
--- Oil.nvim set up
-require("oil").setup()
-
 -- Yazi.nvim set up
--- oops it's just a keymap :laugh
+require("yazi").setup({
+  open_for_directories = true, -- this is the key option
+})
 
 -- Which-key set up
 require("which-key").setup({
