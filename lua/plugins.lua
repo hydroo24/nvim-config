@@ -7,18 +7,20 @@ vim.pack.add ({
     { src = "https://github.com/nvim-tree/nvim-web-devicons"},
     { src = "https://github.com/neovim/nvim-lspconfig" },
     { src = "https://github.com/mason-org/mason.nvim" },
+    { src = "https://github.com/williamboman/mason-lspconfig.nvim" },
     { src = "https://github.com/mikavilpas/yazi.nvim"},
     { src = "https://github.com/folke/which-key.nvim"},
     { src = "https://github.com/lewis6991/gitsigns.nvim"},
     { src = "https://github.com/windwp/nvim-autopairs"},
     { src = "https://github.com/windwp/nvim-ts-autotag" },
+    { src = "https://github.com/saghen/blink.lib"}, 
+    { src = "https://github.com/Saghen/blink.cmp", version = vim.version.range("1.*")},
 })
 
--- set up the theme lol
+-- set up the theme
 vim.cmd("colorscheme everforest")
 
 -- treesitter set up
-
 -- here's the supported languages
 -- https://github.com/nvim-treesitter/nvim-treesitter/blob/main/SUPPORTED_LANGUAGES.md
 require('nvim-treesitter').setup {
@@ -43,7 +45,20 @@ local languages = {
 require('nvim-treesitter').install (languages):wait(300000)
 
 vim.api.nvim_create_autocmd('FileType', {
-    pattern = { 'python', 'javascript', 'javascriptreact', 'typescript', 'typescriptreact', 'cpp', 'lua', 'json', 'bash', 'html', 'css', 'markdown' },
+    pattern = {
+        'python',
+        'javascript',
+        'javascriptreact',
+        'typescript',
+        'typescriptreact',
+        'cpp',
+        'lua',
+        'json',
+        'bash',
+        'html',
+        'css',
+        'markdown',
+    },
     callback = function()
         vim.treesitter.start()
     end,
@@ -77,8 +92,18 @@ local servers = {
     "bashls",
     "html",
     "cssls",
+    "tailwindcss",
     "marksman",
 }
+
+require("mason-lspconfig").setup {
+    ensure_installed = servers
+}
+local capabilities = require("blink.cmp").get_lsp_capabilities()
+
+vim.lsp.config('*', {
+    capabilities = capabilities,
+})
 
 for _, lang in ipairs(servers) do
     vim.lsp.enable(lang)
@@ -138,4 +163,21 @@ require('nvim-ts-autotag').setup({
   --     enable_close = false
   --   }
   -- }
+})
+
+-- set up blink.cmp
+require("blink.cmp").setup({
+    keymap = { preset = "default" },
+    appearance = { nerd_font_variant = "mono" },
+    completion = {
+        documentation = { auto_show = true },
+        menu = { border = "rounded" },
+        ghost_text = { enabled = true }, -- shows preview of completion inline before accepting
+    },
+    sources = {
+        default = { "lsp", "path", "snippets", "buffer" },
+    },
+    fuzzy = {
+        implementation = "lua",
+    },
 })
